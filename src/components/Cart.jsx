@@ -18,7 +18,7 @@ export default function Cart() {
 
     const handleRemoveFromCart = (item) => {
         dispatch(removeFromCart(item));
-        showAlert(`${item.name} has been removed from the cart.`, 'info');
+        showAlert(`${item.name} has been removed from the cart.`, 'error'); // Change to 'error' for red alert
     };
 
     const handleClearCart = () => {
@@ -28,7 +28,7 @@ export default function Cart() {
 
     const handleClearItem = (item) => {
         dispatch(clearItem(item));
-        showAlert(`${item.name} has been removed from the cart.`, 'info');
+        showAlert(`${item.name} has been removed from the cart.`, 'error'); // Change to 'error' for red alert
     };
 
     const showAlert = (message, type) => {
@@ -46,7 +46,7 @@ export default function Cart() {
                         position: 'fixed',
                         top: '20px',
                         right: '20px',
-                        backgroundColor: alert.type === 'success' ? '#28a745' : alert.type === 'info' ? '#17a2b8' : '#dc3545',
+                        backgroundColor: alert.type === 'success' ? '#28a745' : alert.type === 'info' ? '#17a2b8' : alert.type === 'error' ? '#dc3545' : '#dc3545', // Red for errors
                         color: 'white',
                         padding: '15px 30px',
                         borderRadius: '8px',
@@ -104,6 +104,7 @@ export default function Cart() {
                                         </td>
                                     </tr>
                                 ))}
+
                             </tbody>
                         </table>
                     </div>
