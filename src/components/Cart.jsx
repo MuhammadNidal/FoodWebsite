@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { addToCart, removeFromCart, clearItem, clearCart } from '../redux/CartSlice';
 
@@ -8,19 +8,58 @@ export default function Cart() {
     const subtotal = useSelector(state => state.cart.subtotal);
     const total = useSelector(state => state.cart.total);
 
+    // State for managing alerts
+    const [alert, setAlert] = useState({ visible: false, message: '', type: '' });
+
     const handleAddToCart = (item) => {
         dispatch(addToCart(item));
-        alert(`${item.name} has been added to the cart!`); // Alert when item is added
+        showAlert(`${item.name} has been added to the cart!`, 'success');
+    };
+
+    const handleRemoveFromCart = (item) => {
+        dispatch(removeFromCart(item));
+        showAlert(`${item.name} has been removed from the cart.`, 'info');
     };
 
     const handleClearCart = () => {
         dispatch(clearCart());
-        alert('Cart has been cleared!'); // Alert when cart is cleared
+        showAlert('Cart has been cleared!', 'warning');
+    };
+
+    const handleClearItem = (item) => {
+        dispatch(clearItem(item));
+        showAlert(`${item.name} has been removed from the cart.`, 'info');
+    };
+
+    const showAlert = (message, type) => {
+        setAlert({ visible: true, message, type });
+        setTimeout(() => {
+            setAlert({ visible: false, message: '', type: '' });
+        }, 3000);
     };
 
     return (
         <>
-            <h1>Cart</h1>
+            {alert.visible && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        top: '20px',
+                        right: '20px',
+                        backgroundColor: alert.type === 'success' ? '#28a745' : alert.type === 'info' ? '#17a2b8' : '#dc3545',
+                        color: 'white',
+                        padding: '15px 30px',
+                        borderRadius: '8px',
+                        zIndex: 1000,
+                        transition: 'opacity 0.5s ease',
+                        opacity: alert.visible ? 1 : 0,
+                    }}
+                >
+                    {alert.message}
+                </div>
+            )}
+
+            <h1 className="text-3xl font-bold text-center mb-6" style={{ color: '#45595b' }}>Cart</h1>
             {items.length === 0 ? (
                 <h4 className="container mx-auto text-center py-4 text-2xl font-semibold" style={{ color: '#45595b' }}>Your Cart is Empty</h4>
             ) : (
@@ -48,7 +87,7 @@ export default function Cart() {
                                         <td className="px-6 py-4">${item.price}</td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center">
-                                                <button onClick={() => dispatch(removeFromCart(item))} className="bg-gray-100 rounded-full px-3 py-2">
+                                                <button onClick={() => handleRemoveFromCart(item)} className="bg-gray-100 rounded-full px-3 py-2">
                                                     <i className="fa fa-minus"></i>
                                                 </button>
                                                 <p className="w-6 text-center mx-2">{item.quantity}</p>
@@ -59,7 +98,7 @@ export default function Cart() {
                                         </td>
                                         <td className="px-6 py-4">${(item.price * item.quantity).toFixed(2)}</td>
                                         <td className="px-6 py-4">
-                                            <button onClick={() => dispatch(clearItem(item))} className="bg-gray-100 px-3 py-2 rounded-full">
+                                            <button onClick={() => handleClearItem(item)} className="bg-gray-100 px-3 py-2 rounded-full">
                                                 <i className="fa fa-times" style={{ color: '#dc3545' }}></i>
                                             </button>
                                         </td>

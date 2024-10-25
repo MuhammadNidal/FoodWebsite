@@ -1,12 +1,45 @@
-import React from 'react'
-import { fruits } from '../../data/Data'
+import React, { useState } from 'react';
+import { fruits } from '../../data/Data';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../../redux/CartSlice';
 
 const Fruits = () => {
     const dispatch = useDispatch();
+
+    // State to manage alert visibility and message
+    const [alert, setAlert] = useState({ visible: false, message: '' });
+
+    // Function to handle adding to cart
+    const handleAddToCart = (fruit) => {
+        dispatch(addToCart(fruit));
+        setAlert({ visible: true, message: `${fruit.name} added to cart!` });
+
+        // Hide alert after 3 seconds
+        setTimeout(() => {
+            setAlert({ visible: false, message: '' });
+        }, 3000);
+    };
+
     return (
         <div className='mt-40 container ml-auto mr-auto'>
+            {alert.visible && (
+                <div 
+                    style={{
+                        position: 'fixed',
+                        top: '20px',
+                        right: '20px', // Move to the right side
+                        backgroundColor: '#81c408',
+                        color: 'white',
+                        padding: '15px 30px', // Increased size
+                        borderRadius: '8px',
+                        zIndex: 1000,
+                        transition: 'opacity 0.5s ease',
+                        opacity: alert.visible ? 1 : 0,
+                    }}
+                >
+                    {alert.message}
+                </div>
+            )}
             <div className='flex flex-col mb-10 mx-4 md:mx-20 lg:flex lg:justify-between lg:flex-row lg:mx-10 lg:gap-10'>
                 <h1 className='text-3xl font-semibold mb-6 lg:text-4xl lg:flex lg:justify-center lg:items-center' style={{color: '#45595b'}}>Our Organic Products</h1>
                 <ul className='flex flex-row flex-wrap'>
@@ -17,7 +50,7 @@ const Fruits = () => {
                     <li className='py-2 px-3 border rounded-full w-32 text-center mx-2 my-2 lg:mx-1 hover:cursor-pointer' style={{backgroundColor: '#f4f6f8'}}>Meat</li>
                 </ul>
             </div>
-            <div className='mx-4 sm:mx-20 md:grid md:grid-cols-2 md:gap-4 lg:mx-10 lg:grid-cols-3 xl:grid-cols-4 '>
+            <div className='mx-4 sm:mx-20 md:grid md:grid-cols-2 md:gap-4 lg:mx-10 lg:grid-cols-3 xl:grid-cols-4'>
                 {fruits.map((val) => {
                     return (
                         <div key={val.id} className='box border rounded-lg border-orange-400 mx-auto mb-6 w-full'>
@@ -31,9 +64,9 @@ const Fruits = () => {
                             </div>
                             <div className='flex justify-between items-center mb-8 mx-6 xl:mx-3'>
                                 <p className='font-semibold text-lg' style={{color: '#0c363b'}}>${val.price} / Kg</p>
-                                <div className='border rounded-full border-orange-400 py-2 px-4 lg:px-2 '>
-                                    <span className='pr-4 lg:pr-1 ' style={{color: '#81c408'}}>{val.icon}</span>
-                                    <button onClick={() => dispatch(addToCart(val))} className='font-semibold' style={{color: '#81c408'}}>{val.cart}</button>
+                                <div className='border rounded-full border-orange-400 py-2 px-4 lg:px-2'>
+                                    <span className='pr-4 lg:pr-1' style={{color: '#81c408'}}>{val.icon}</span>
+                                    <button onClick={() => handleAddToCart(val)} className='font-semibold' style={{color: '#81c408'}}>{val.cart}</button>
                                 </div>
                             </div>
                         </div>
@@ -44,4 +77,4 @@ const Fruits = () => {
     )
 }
 
-export default Fruits
+export default Fruits;
